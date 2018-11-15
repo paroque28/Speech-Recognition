@@ -5,6 +5,15 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 def input_vector(audio_filename, numcep, numcontext):
+    '''
+    Turn an audio file into feature representation.
+    This function has been modified from Mozilla DeepSpeech:
+    https://github.com/mozilla/DeepSpeech/blob/master/util/audio.py
+    and https://github.com/mrubash1/RNN-Tutorial/blob/master/src/features/utils/load_audio_to_mem.py
+    # This Source Code Form is subject to the terms of the Mozilla Public
+    # License, v. 2.0. If a copy of the MPL was not distributed with this
+    # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    '''
     # Load wav files
     fs, audio = wav.read(audio_filename)
     
