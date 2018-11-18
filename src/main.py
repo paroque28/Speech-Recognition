@@ -20,7 +20,7 @@ from matplotlib import cm
 audio_path = 'data'
 normalized_audio_path = 'normalized_data'
 pathlib.Path(normalized_audio_path).mkdir(parents=True, exist_ok=True)
-audio_files = [f for f in listdir(audio_path) if isfile(join(audio_path, f))] #Just string names
+normalized_audio_files = [f for f in listdir(normalized_audio_path) if isfile(join(normalized_audio_path, f))] #Just string names
 
 # Function that normalizes the amplitude of an audio file. Called by load_audios()
 def match_target_amplitude(sound, target_dBFS):
@@ -29,7 +29,7 @@ def match_target_amplitude(sound, target_dBFS):
 
 def get_number (audio_name):
     number_name = audio_name [0 : audio_name.find('_')]
-    num_array = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'
+    num_array = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
                     'once', 'doce', 'trece', 'catorce', 'quince']
     num = num_array.index(number_name)
     return num
@@ -39,11 +39,8 @@ def get_number (audio_name):
 def load_audios ():
     normalized_audios = []
     global audio_files
-    for audio_name in audio_files:
-        sound = AudioSegment.from_file(audio_path + '/' + audio_name)
-        fs = wav.read(audio_path + '/' + audio_name) [0]
-        normalized_audio = match_target_amplitude(sound, -20)
-        normalized_audio.export (normalized_audio_path + '/' + audio_name, format = 'wav')
+    for audio_name in normalized_audio_files:
+        fs, normalized_audio = wav.read(normalized_audio_path + '/' + audio_name)
         normalized_audios.append (normalized_audio)
     return fs, normalized_audios
 ################################################################################
@@ -53,19 +50,13 @@ def load_audios ():
 def get_training_set ():
     training_set = []
     fs, normalized_audios = load_audios()
-    for i in range (len(audio_files)):
-        audio_name = audio_files [i]
+    for i in range (len(normalized_audio_files)):
+        audio_name = normalized_audio_files [i]
         audio = normalized_audios [i]
         number = get_number(audio_name)
         audio_info = [input_vector(audio, fs,13, 9), number]
         training_set.append(audio_info)
     return training_set
-
-def get_array_of_samples(self):
-    """
-    returns the raw_data as an array of samples
-    """
-    return array.array(self.array_type, self._data)
     
 def input_vector(audio, fs, numcep, numcontext):
     '''
@@ -81,7 +72,7 @@ def input_vector(audio, fs, numcep, numcontext):
     #fs, audio = wav.read(audio_filename)
     
     # Get mfcc coefficients
-    orig_inputs = mfcc(audio.get_array_of_samples(), samplerate=fs, numcep=numcep)
+    orig_inputs = mfcc(audio, samplerate=fs, numcep=numcep)
     print (orig_inputs.shape)
     
     # We only keep every second feature (BiRNN stride = 2) ???
