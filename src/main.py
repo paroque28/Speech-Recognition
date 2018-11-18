@@ -22,11 +22,6 @@ normalized_audio_path = 'normalized_data'
 pathlib.Path(normalized_audio_path).mkdir(parents=True, exist_ok=True)
 normalized_audio_files = [f for f in listdir(normalized_audio_path) if isfile(join(normalized_audio_path, f))] #Just string names
 
-# Function that normalizes the amplitude of an audio file. Called by load_audios()
-def match_target_amplitude(sound, target_dBFS):
-    change_in_dBFS = target_dBFS - sound.dBFS
-    return sound.apply_gain(change_in_dBFS)
-
 def get_number (audio_name):
     number_name = audio_name [0 : audio_name.find('_')]
     num_array = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
@@ -38,7 +33,7 @@ def get_number (audio_name):
 #Returns a list with the normalized audios and save the normalized audios in the normalized_audios directory.
 def load_audios ():
     normalized_audios = []
-    global audio_files
+    global normalized_audio_files
     for audio_name in normalized_audio_files:
         fs, normalized_audio = wav.read(normalized_audio_path + '/' + audio_name)
         normalized_audios.append (normalized_audio)
