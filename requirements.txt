@@ -4,3 +4,5 @@ matplotlib
 scikit-learn
 tensorflow
 keras
+pydub
+python_speech_features
