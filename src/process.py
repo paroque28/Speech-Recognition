@@ -3,7 +3,6 @@ from scipy.io import wavfile
 from os import listdir
 from os.path import isfile, join
 import os.path
-from pydub import AudioSegment
 import pathlib
 ################################
 
@@ -20,7 +19,6 @@ from matplotlib import cm
 audio_path = 'data'
 normalized_audio_path = 'normalized_data'
 pathlib.Path(normalized_audio_path).mkdir(parents=True, exist_ok=True)
-normalized_audio_files = [f for f in listdir(normalized_audio_path) if isfile(join(normalized_audio_path, f))] #Just string names
 
 def get_number (audio_name):
     number_name = audio_name [0 : audio_name.find('_')]
@@ -33,65 +31,45 @@ def get_number (audio_name):
 #Returns a list with the normalized audios and save the normalized audios in the normalized_audios directory.
 def load_audios ():
     normalized_audios = []
-    global normalized_audio_files
+    normalized_audio_files = [f for f in listdir(normalized_audio_path) if isfile(join(normalized_audio_path, f))]
     for audio_name in normalized_audio_files:
         fs, normalized_audio = wav.read(normalized_audio_path + '/' + audio_name)
-        normalized_audios.append (normalized_audio)
+        normalized_audios.append ([normalized_audio, get_number(audio_name)])
     return fs, normalized_audios
 ################################################################################
 
 
 #Rerurns the MFCC vector and the number
-def get_training_set ():
+def get_training_set(numcep, numcontext):
     training_set = []
     label_set = []
     fs, normalized_audios = load_audios()
-    for i in range (len(normalized_audio_files)):
-        audio_name = normalized_audio_files [i]
-        audio = normalized_audios [i]
-        audio.shape
-        number = get_number(audio_name)
-        audio_info = input_vector(audio, fs,13, 9)
+    for i in range (len(normalized_audios)):
+        audio = normalized_audios [i][0]
+        number = normalized_audios [i][1]
+        audio_info = input_vector(audio, fs, numcep, numcontext)
         #audio_info=np.reshape(100,audio_info.shape[1])
-
         label_set.append(number)
         training_set.append(audio_info)
-    return np.asarray(training_set),np.asarray(label_set)
+    assert(label_set.shape[0] == training_set.shape[0])
+    return np.asarray(training_set), np.asarray(label_set)
     
 def input_vector(audio, fs, numcep, numcontext):
     '''
     Turn an audio file into feature representation.
     This function has been modified from Mozilla DeepSpeech:
     https://github.com/mozilla/DeepSpeech/blob/master/util/audio.py
-    and https://github.com/mrubash1/RNN-Tutorial/blob/master/src/features/utils/load_audio_to_mem.py
+    and
+    https://github.com/mrubash1/RNN-Tutorial/blob/master/src/features/utils/load_audio_to_mem.py
     # This Source Code Form is subject to the terms of the Mozilla Public
     # License, v. 2.0. If a copy of the MPL was not distributed with this
     # file, You can obtain one at http://mozilla.org/MPL/2.0/.
     '''
-    # Load wav files
-    #fs, audio = wav.read(audio_filename)
     
     # Get mfcc coefficients
     orig_inputs = mfcc(audio, samplerate=fs, numcep=numcep)
-
     # We only keep every second feature (BiRNN stride = 2) ???
     orig_inputs = orig_inputs[::2]
-
-    '''
-    ###PLOT
-    ig, ax = plt.subplots()
-    mfcc_data= np.swapaxes(orig_inputs, 0 ,1)
-    cax = ax.imshow(mfcc_data, interpolation='nearest', cmap=cm.jet, origin='lower', aspect='auto')
-    ax.set_title('MFCC')
-    #Showing mfcc_data
-    plt.show()
-    #Showing orig_inputs
-    plt.plot(orig_inputs)
-    plt.show()
-    ###END PLOT
-    '''
-
-
     # For each time slice of the training set, we need to copy the context this makes
     # the numcep dimensions vector into a numcep + 2*numcep*numcontext dimensions
     # because of:
@@ -99,8 +77,7 @@ def input_vector(audio, fs, numcep, numcontext):
     #  - numcontext*numcep dimensions for each of the past and future (x2) mfcc feature set
     # => so numcep + 2*numcontext*numcep
     train_inputs = np.array([], np.float32)
-    train_inputs.resize((orig_inputs.shape[0], numcep + 2 * numcep * numcontext))
-    
+    train_inputs.resize(orig_inputs.shape[0], numcep + 2 * numcep * numcontext)
     # Prepare pre-fix post fix context
     empty_mfcc = np.array([])
     empty_mfcc.resize((numcep))
@@ -149,9 +126,14 @@ def input_vector(audio, fs, numcep, numcontext):
     # Scale/standardize the inputs
     # This can be done more efficiently in the TensorFlow graph
     train_inputs = (train_inputs - np.mean(train_inputs)) / np.std(train_inputs)
-
     return train_inputs
 
-#vector = input_vector("../data/catorce_0_2.wav" , 13, 9)
-#print (vector.shape)
-#print(get_number('ocho_14_2'))
+
+def main():
+    X, Y = get_training_set(13, 9)
+    print(X.shape)
+    print(Y.shape)
+
+
+if __name__== "__main__":
+  main()
