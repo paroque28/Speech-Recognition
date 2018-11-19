@@ -44,14 +44,19 @@ def load_audios ():
 #Rerurns the MFCC vector and the number
 def get_training_set ():
     training_set = []
+    label_set = []
     fs, normalized_audios = load_audios()
     for i in range (len(normalized_audio_files)):
         audio_name = normalized_audio_files [i]
         audio = normalized_audios [i]
+        audio.shape
         number = get_number(audio_name)
-        audio_info = [input_vector(audio, fs,13, 9), number]
+        audio_info = input_vector(audio, fs,13, 9)
+        #audio_info=np.reshape(100,audio_info.shape[1])
+
+        label_set.append(number)
         training_set.append(audio_info)
-    return training_set
+    return np.asarray(training_set),np.asarray(label_set)
     
 def input_vector(audio, fs, numcep, numcontext):
     '''
@@ -68,11 +73,11 @@ def input_vector(audio, fs, numcep, numcontext):
     
     # Get mfcc coefficients
     orig_inputs = mfcc(audio, samplerate=fs, numcep=numcep)
-    print (orig_inputs.shape)
-    
+
     # We only keep every second feature (BiRNN stride = 2) ???
     orig_inputs = orig_inputs[::2]
 
+    '''
     ###PLOT
     ig, ax = plt.subplots()
     mfcc_data= np.swapaxes(orig_inputs, 0 ,1)
@@ -84,7 +89,7 @@ def input_vector(audio, fs, numcep, numcontext):
     plt.plot(orig_inputs)
     plt.show()
     ###END PLOT
-
+    '''
 
 
     # For each time slice of the training set, we need to copy the context this makes
@@ -144,9 +149,9 @@ def input_vector(audio, fs, numcep, numcontext):
     # Scale/standardize the inputs
     # This can be done more efficiently in the TensorFlow graph
     train_inputs = (train_inputs - np.mean(train_inputs)) / np.std(train_inputs)
+
     return train_inputs
 
 #vector = input_vector("../data/catorce_0_2.wav" , 13, 9)
 #print (vector.shape)
 #print(get_number('ocho_14_2'))
-print(get_training_set())

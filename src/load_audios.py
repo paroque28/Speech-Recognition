@@ -18,11 +18,14 @@ def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
 
-for audio_name in audio_files:
-    sound = AudioSegment.from_file(audio_path + '/' + audio_name)
-    normalized_audio = match_target_amplitude(sound, -20)
-    normalized_audio.export (normalized_audio_path + '/' + audio_name, format = 'wav')
-    #normalized_audios.append (normalized_audio)
+
+
+def normalize():
+    for audio_name in audio_files:
+        sound = AudioSegment.from_file(audio_path + '/' + audio_name)
+        normalized_audio = match_target_amplitude(sound, -20)
+        normalized_audio.export (normalized_audio_path + '/' + audio_name, format = 'wav')
+        #normalized_audios.append (normalized_audio)
 
 
 
