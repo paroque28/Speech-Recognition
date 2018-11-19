@@ -11,7 +11,7 @@ from python_speech_features import mfcc
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-
+import keras
 
 
 ################################ IMPORT MODULE ################################
@@ -51,7 +51,7 @@ def get_training_set(numcep, numcontext):
         #audio_info=np.reshape(100,audio_info.shape[1])
         label_set.append(number)
         training_set.append(audio_info)
-    assert(label_set.shape[0] == training_set.shape[0])
+    assert(len(label_set) == len(training_set))
     return np.asarray(training_set), np.asarray(label_set)
     
 def input_vector(audio, fs, numcep, numcontext):
@@ -133,6 +133,8 @@ def main():
     X, Y = get_training_set(13, 9)
     print(X.shape)
     print(Y.shape)
+    X = keras.preprocessing.sequence.pad_sequences(X, maxlen=100)
+    print(X.shape)
 
 
 if __name__== "__main__":
