@@ -23,10 +23,8 @@ def predictNumber(audioPath):
     X=X.reshape(1,X.shape[0],X.shape[1])
     X = keras.preprocessing.sequence.pad_sequences(X, maxlen=100)
 
-
-
     number=model.predict(X)
-    print(Classes[np.argmax(number)])
+    print("System Output: " + str(Classes[np.argmax(number)]))
 
 
 
