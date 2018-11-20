@@ -9,25 +9,32 @@ from model import getModel
 
 def train():
     clases=16
-    imputShape=(1,1,1)
-    x_train,y_train=get_training_set()
+    inputShape=(100,247)
+    x_train,y_train=get_training_set(13,9)
     x_test=x_train[1000:]
     y_test=y_train[1000:]
     x_train=x_train[:1000]
     y_train=y_train[:1000]
 
+    x_train = keras.preprocessing.sequence.pad_sequences(x_train, maxlen=100)
+    x_test = keras.preprocessing.sequence.pad_sequences(x_test, maxlen=100)
+
 
     y_train = keras.utils.to_categorical(y_train, 16)
     y_test = keras.utils.to_categorical(y_test, 16)
+    print(y_train)
+    print(x_train.shape)
 
-    model = getModel(imputShape, clases)
+    
+    model = getModel(inputShape, clases)
 
-    model.fit(x_train, y_train,batch_size=batch_size,epochs=20, verbose=1,validation_data=(x_test, y_test))
+    model.fit(x_train, y_train,batch_size=10,epochs=100, verbose=1,validation_data=(x_test, y_test))
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
-    model.save('models/model.hdf5')
-
-    print(model.summary())
+    model.save('model/model.hdf5')
 
 
+
+if __name__=='__main__':
+    train()
