@@ -27,7 +27,10 @@ def normalize():
         normalized_audio.export (normalized_audio_path + '/' + audio_name, format = 'wav')
         #normalized_audios.append (normalized_audio)
 
+    
 
+if __name__== "__main__":
+    normalize()
 
 
 #fs, data = wavfile.read(filename)
