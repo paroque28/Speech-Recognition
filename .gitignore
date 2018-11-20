@@ -110,3 +110,5 @@ tags
 *.vim
 
 normalized_data
+
+.DS_Store
