@@ -24,18 +24,18 @@ def train():
 
 
     y_train = keras.utils.to_categorical(y_train, 16)
-    Y_test = keras.utils.to_categorical(y_test, 16)
+    y_test = keras.utils.to_categorical(y_test, 16)
     print(y_train)
     print(x_train.shape)
 
     
     model = getModel(inputShape, clases)
 
-    model.fit(x_train, y_train,batch_size=10,epochs=100, verbose=1,validation_data=(x_test, Y_test))
+    model.fit(x_train, y_train,batch_size=10,epochs=100, verbose=1,validation_data=(x_test, y_test))
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
-    model.save('model/model.hdf5')
+    model.save('model/model2.hdf5')
 
 
 
