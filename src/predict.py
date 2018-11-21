@@ -29,26 +29,36 @@ def predictNumber(audioPath):
 
 
 
-# def plot():
-#     plt.figure()
-#     model=load_model('model/model.hdf5')
+def plot():
+    plt.figure()
+    model=load_model('model/model.hdf5')
 
-#     b=[]
-#     a=[]
+    y_data=np.arange(16)
+    x_data=[]
 
-    
+    for number in Classes:
+        fs, audio = wav.read("test_data/"+str(number)+"_javier.wav") ## tiene que ser normalizado
+        data = input_vector(audio, fs, 13, 9)
+        data =data.reshape(1,data.shape[0],data.shape[1])
+        data = keras.preprocessing.sequence.pad_sequences(data, maxlen=100)
+        data = data.reshape(data.shape[1],data.shape[2])
+        x_data.append(data)
+    x_data = np.asarray(x_data)
 
+    x_predict = model.predict_classes(x_data,verbose=0)
 
-#     for x in range(0,15):
-#         a.insert(x,y_train[x])
-#         b.insert(x,model.predict_classes(x_train[x],verbose=0)[0])
-
-#     confMatrix = confusion_matrix(b,a)
-#     plot_confusion_matrix(confMatrix, classes=Classes, title='confusion matrix')
-#     plt.show()
+    confMatrix = confusion_matrix(x_predict,y_data)
+    print(confMatrix)
+    plot_confusion_matrix(confMatrix, classes=Classes, title='Confusion matrix')
+    plt.show()
 
 
 
 if __name__=='__main__':
-    audio=sys.argv[1]
-    predictNumber(audio)
+    type=sys.argv[1]
+
+    if type=="-p":
+        audio=sys.argv[2]
+        predictNumber(audio)
+    elif type=="-m":
+        plot()
