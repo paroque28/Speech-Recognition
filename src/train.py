@@ -17,11 +17,11 @@ def train():
     
     model = getModel((x_train.shape[1],x_train.shape[2]), y_train.shape[1])
 
-    model.fit(x_train, y_train,batch_size=10,epochs=100, verbose=1,validation_data=(x_test, y_test))
+    model.fit(x_train, y_train,batch_size=10,epochs=104, verbose=1,validation_data=(x_test, y_test))
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
-    model.save('model/model2.hdf5')
+    model.save('model/model5.hdf5')
 
 
 

@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix
 Classes = ['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce', 'quince']
 
 def predictNumber(audioPath):
-    model=load_model('model/model.hdf5')
+    model=load_model('model/model4.hdf5')
 
     ##procesar audio, o lo que sea y meter en audio
     fs, audio = wav.read(audioPath) ## tiene que ser normalizado
@@ -31,7 +31,7 @@ def predictNumber(audioPath):
 
 def plot():
     plt.figure()
-    model=load_model('model/model.hdf5')
+    model=load_model('model/model4.hdf5')
 
     y_data=np.arange(16)
     x_data=[]
