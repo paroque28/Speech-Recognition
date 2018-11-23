@@ -29,9 +29,5 @@ def normalize():
 
 
 
-def main():
-    normalize()
-
-
 if __name__== "__main__":
-    main()
+        normalize()

@@ -5,6 +5,7 @@ from struct import pack
 import pyaudio
 import wave
 from predict import predictNumber
+from load_audios import normalize_single
 THRESHOLD = 500
 CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
@@ -89,7 +90,7 @@ def record():
         elif not silent and not snd_started:
             snd_started = True
 
-        if snd_started and num_silent > 30:
+        if snd_started and num_silent > 10:
             break
 
     sample_width = p.get_sample_size(FORMAT)
@@ -99,7 +100,7 @@ def record():
 
     r = normalize(r)
     r = trim(r)
-    r = add_silence(r, 0.0)
+    r = add_silence(r, 0.2)
     return sample_width, r
 
 def record_to_file(path):
@@ -118,4 +119,5 @@ if __name__ == '__main__':
     print("Please speak a word into the microphone")
     record_to_file('demo.wav')
     print("Done - result written to demo.wav")
-    print("The recognized number is: " + predictNumber('demo.wav') + "!!!!")
+    normalize_single('demo.wav')
+    print("The recognized number is: " + predictNumber('normalized_demo.wav') + "!!!!")
