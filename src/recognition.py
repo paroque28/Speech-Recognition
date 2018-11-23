@@ -89,7 +89,7 @@ def record():
         elif not silent and not snd_started:
             snd_started = True
 
-        if snd_started and num_silent > 30:
+        if snd_started and num_silent > 10:
             break
 
     sample_width = p.get_sample_size(FORMAT)
@@ -99,7 +99,7 @@ def record():
 
     r = normalize(r)
     r = trim(r)
-    r = add_silence(r, 0.0)
+    r = add_silence(r, 0.2)
     return sample_width, r
 
 def record_to_file(path):
