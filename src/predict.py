@@ -39,8 +39,9 @@ def plot():
     y_predict = model.predict_classes (x_test, verbose=0)
     
     plt.figure()
-    confMatrix = confusion_matrix(y_test,y_predict)
-    plot_confusion_matrix(confMatrix, classes=Classes, title='Confusion matrix')
+    cm = confusion_matrix(y_test,y_predict)
+    cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    plot_confusion_matrix(cm, classes=Classes, title='Confusion matrix')
     plt.show()
 
 
