@@ -18,7 +18,7 @@ import keras
 
 audio_path = 'data'
 normalized_audio_path = 'normalized_data'
-test_audio_path = 'test_data'
+test_audio_path = 'test_normalized_data'
 pathlib.Path(normalized_audio_path).mkdir(parents=True, exist_ok=True)
 
 def get_number (audio_name):
