@@ -25,7 +25,8 @@ def predictNumber(audioPath):
     X = keras.preprocessing.sequence.pad_sequences(X, maxlen=100)
 
     number=model.predict(X)
-    print("System Output: " + str(Classes[np.argmax(number)]))
+    #print("System Output: " + str(Classes[np.argmax(number)]))
+    return  str(Classes[np.argmax(number)])
 
 
 
@@ -51,6 +52,7 @@ if __name__=='__main__':
 
     if type=="-p":
         audio=sys.argv[2]
-        predictNumber(audio)
+        number = predictNumber(audio)
+        print("System Output: " + number)
     elif type=="-m":
         plot()
