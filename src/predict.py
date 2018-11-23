@@ -1,9 +1,10 @@
+#!/bin/python3
 import numpy as np
 import keras
 import sys
 import matplotlib.pyplot as plt
 from keras.models import load_model
-from process import input_vector
+from dataset import input_vector, get_test_set
 from scipy.io import wavfile as wav
 from plots import plot_confusion_matrix
 from sklearn.metrics import confusion_matrix
@@ -30,25 +31,15 @@ def predictNumber(audioPath):
 
 
 def plot():
-    plt.figure()
     model=load_model('model/model4.hdf5')
 
-    y_data=np.arange(16)
-    x_data=[]
+    x_test, y_test=get_test_set(13,9)
+    x_test = keras.preprocessing.sequence.pad_sequences(x_test, maxlen=100)
 
-    for number in Classes:
-        fs, audio = wav.read("test_data/"+str(number)+"_javier.wav") ## tiene que ser normalizado
-        data = input_vector(audio, fs, 13, 9)
-        data =data.reshape(1,data.shape[0],data.shape[1])
-        data = keras.preprocessing.sequence.pad_sequences(data, maxlen=100)
-        data = data.reshape(data.shape[1],data.shape[2])
-        x_data.append(data)
-    x_data = np.asarray(x_data)
-
-    x_predict = model.predict_classes(x_data,verbose=0)
-
-    confMatrix = confusion_matrix(x_predict,y_data)
-    print(confMatrix)
+    y_predict = model.predict_classes (x_test, verbose=0)
+    
+    plt.figure()
+    confMatrix = confusion_matrix(y_test,y_predict)
     plot_confusion_matrix(confMatrix, classes=Classes, title='Confusion matrix')
     plt.show()
 
