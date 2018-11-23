@@ -28,13 +28,11 @@ def normalize(audio_path, normalized_audio_path):
         sound = AudioSegment.from_file(audio_path + '/' + audio_name)
         normalized_audio = match_target_amplitude(sound, -20)
         normalized_audio.export (normalized_audio_path + '/' + audio_name, format = 'wav')
-        #normalized_audios.append (normalized_audio)
-
-    
+def normalize_single(path):
+    sound = AudioSegment.from_file(path)
+    normalized_audio = match_target_amplitude(sound, -20)
+    normalized_audio.export ("normalized_" + path, format = 'wav')
 
 if __name__== "__main__":
     normalize(audio_path,normalized_audio_path)
     normalize(test_audio_path,test_normalized_audio_path)
-
-
-#fs, data = wavfile.read(filename)
